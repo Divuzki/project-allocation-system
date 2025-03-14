@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 require('dotenv').config();
 
 // Import routes
@@ -14,9 +15,11 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-// CORS Configuration
+// CORS Configuration - more secure for production environments
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL || '*' 
+    : 'http://localhost:3000',
   credentials: true
 }));
 app.use(morgan('dev'));
@@ -25,6 +28,21 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/users', userRoutes);
+
+// Serve static files from the 'public' directory in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from the public directory
+  app.use(express.static(path.join(__dirname, 'public')));
+  
+  // Handle React routing, return all requests to React app
+  app.get('*', (req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
