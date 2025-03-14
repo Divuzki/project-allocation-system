@@ -27,7 +27,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=5000
-      - MONGO_URI=mongodb://mongodb:27017/project-allocation
+      - MONGO_URL=mongodb://mongodb:27017/project-allocation
       - JWT_SECRET=mysecretkey123
       - JWT_EXPIRE=30d
     networks:
