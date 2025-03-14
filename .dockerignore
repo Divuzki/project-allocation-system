@@ -1,0 +1,39 @@
+\'.# Node modules
+node_modules
+npm-debug.log
+
+# Environment variables
+.env
+.env.*
+
+# Git files
+.git
+.gitignore
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+README.md
+docs
+
+# Build directories
+frontend/build
+frontend/node_modules
+backend/node_modules
+
+# Logs
+logs
+*.log
+
+# Testing
+coverage
+.nyc_output
+
+# Editor directories and files
+.idea
+.vscode
+*.swp
+*.swo
