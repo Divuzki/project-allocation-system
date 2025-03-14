@@ -1,0 +1,63 @@
+/* Main App Styles */
+.App {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Navbar Styles */
+.navbar-brand {
+  font-weight: bold;
+}
+
+/* Form Styles */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Project Card Styles */
+.project-card {
+  margin-bottom: 20px;
+  transition: transform 0.3s;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Dashboard Styles */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Status Badge Styles */
+.badge-submitted {
+  background-color: #17a2b8;
+}
+
+.badge-approved {
+  background-color: #28a745;
+}
+
+.badge-rejected {
+  background-color: #dc3545;
+}
+
+/* Loading Spinner */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
