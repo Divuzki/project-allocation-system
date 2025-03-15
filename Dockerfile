@@ -6,7 +6,7 @@ WORKDIR /app/frontend
 
 # Copy frontend package files and install dependencies
 COPY frontend/package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy frontend source code and build
 COPY frontend/ ./
@@ -28,6 +28,9 @@ COPY backend/ ./
 
 # Copy built frontend from the frontend-build stage
 COPY --from=frontend-build /app/frontend/build ./public
+
+# Ensure correct permissions for static files
+RUN chmod -R 755 ./public
 
 # Set environment variables - Railway will inject these at runtime
 ENV NODE_ENV=production
