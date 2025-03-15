@@ -11,7 +11,7 @@ router.get('/check-title', protect, authorize('student'), async (req, res) => {
   try {
     let { title } = req.query;
 
-    title = `${title}`.trim().toLowerCase()
+    title = `${title.toLowerCase()}`.trim()
     
     if (!title) {
       return res.status(400).json({

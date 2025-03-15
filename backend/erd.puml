@@ -1,0 +1,25 @@
+@startuml
+
+entity "User" {
+  name: String
+  email: String
+  password: String
+  role: String
+  createdAt: Date
+  * _id: ObjectId
+  __v: Number
+}
+
+entity "Project" {
+  title: String
+  description: String
+  status: String
+  student: ObjectId
+  supervisor: ObjectId
+  submissionDate: Date
+  feedback: String
+  * _id: ObjectId
+  __v: Number
+}
+
+@enduml

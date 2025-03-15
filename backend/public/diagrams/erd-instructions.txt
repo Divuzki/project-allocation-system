@@ -1,0 +1,25 @@
+
+PlantUML ERD Generation Instructions
+=================================
+
+The PlantUML code has been generated and saved as 'erd.puml' in the backend directory.
+
+To generate the ERD diagram image, please use one of the following online PlantUML services:
+
+1. PlantText: https://www.planttext.com/
+2. PlantUML Online Server: https://www.plantuml.com/plantuml/
+
+Instructions:
+1. Copy the contents of the 'erd.puml' file
+2. Paste it into the online editor of your chosen service
+3. The diagram will be generated automatically
+4. Download the generated image
+5. Save it to the 'backend/public/diagrams' directory as 'erd.png'
+
+Alternatively, if you want to use PlantUML locally:
+1. Ensure Java is installed on your system
+2. Download the PlantUML jar from https://plantuml.com/download
+3. Run: java -jar plantuml.jar erd.puml
+
+Note: The error you encountered was likely due to Java not being properly installed or configured.
+The PlantUML library requires Java to generate diagrams.

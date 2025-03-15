@@ -60,7 +60,7 @@ const ProjectForm = () => {
       try {
         const res = await axios.get(`/api/projects/check-title?title=${encodeURIComponent(title)}`);
         if (res.data.exists) {
-          setTitleError('A project with this title already exists. Please choose a different title.');
+          setTitleError('This topic already exists.');
         }
       } catch (err) {
         setTitleError('Unable to verify title availability. Please try again.');
