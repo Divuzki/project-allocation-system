@@ -10,9 +10,10 @@ RUN npm ci
 
 # Copy frontend source code and build
 COPY frontend/ ./
-# Set the PUBLIC_URL environment variable to ensure correct asset paths
+# Set the PUBLIC_URL environment variable to ensure correct asset paths for Railway.app deployment
 ARG PUBLIC_URL=/
 ENV PUBLIC_URL=$PUBLIC_URL
+# Build the frontend - this will be copied to backend/public in the next stage
 RUN npm run build
 
 # Stage 2: Set up the Node.js backend
@@ -26,8 +27,8 @@ RUN npm install --only=production
 # Copy backend source code
 COPY backend/ ./
 
-# Copy built frontend from the frontend-build stage
-COPY --from=frontend-build /app/frontend/build ./public
+# Frontend is already built directly to backend/public folder by the build script
+# No need to copy files
 
 # Ensure correct permissions for static files
 RUN chmod -R 755 ./public
@@ -36,6 +37,8 @@ RUN chmod -R 755 ./public
 ENV NODE_ENV=production
 # Use PORT variable that Railway automatically assigns
 ENV PORT=$PORT
+# Ensure frontend URL is set for CORS
+ENV FRONTEND_URL=*
 
 # Expose the port - Railway will automatically route to this port
 EXPOSE $PORT
