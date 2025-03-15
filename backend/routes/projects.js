@@ -9,7 +9,9 @@ const { checkDuplicateTitle, validateProjectInput } = require('../middleware/pro
 // @access  Private (Students only)
 router.get('/check-title', protect, authorize('student'), async (req, res) => {
   try {
-    const { title } = req.query;
+    let { title } = req.query;
+
+    title = `${title}`.trim().toLowerCase()
     
     if (!title) {
       return res.status(400).json({
