@@ -1,444 +1,187 @@
-# Chapter 4: Implementation, Testing, and Deployment
+# Chapter 4: Implementation
 
-## 4.1 Introduction
+This chapter provides a detailed account of the implementation of the Student Project Allocation and Verification System, a web-based application designed to automate and streamline the process of allocating student projects and verifying their progress. Built using the MERN stack (MongoDB, Express.js, React, Node.js), the system enhances efficiency and transparency in educational institutions by managing the entire project allocation workflow. The implementation follows the Object-Oriented System Development Methodology (OOSDM), ensuring a modular, scalable, and maintainable solution. This chapter covers the system architecture, technology stack, development setup, key modules, database implementation, user interfaces, testing, deployment, and challenges encountered during development, with visual aids such as diagrams and screenshots included to enhance understanding.
 
-This chapter details the implementation, testing, and deployment processes of the Student Project Allocation System. Following the methodology and design outlined in Chapter 3, this chapter focuses on the practical aspects of bringing the system to life. The implementation leverages the MERN stack (MongoDB, Express.js, React, Node.js) to create a robust, scalable, and user-friendly application that effectively addresses the challenges identified in the manual allocation process.
 
-The chapter is organized into three main sections:
-1. Implementation details, including backend and frontend development
-2. Testing strategies and results
-3. Deployment procedures and maintenance practices
+## 4.1 System Architecture
 
-Each section provides comprehensive information about the approaches, technologies, and best practices employed to ensure the system meets all functional and non-functional requirements while maintaining high quality and reliability.
+The Student Project Allocation and Verification System adopts a client-server architecture. The frontend, developed with React, provides a responsive and interactive user interface, while the backend, powered by Node.js and Express.js, handles business logic, authentication, and database operations. MongoDB serves as the NoSQL database, offering flexible and scalable data storage. Communication between the frontend and backend occurs through RESTful APIs, ensuring a clear separation of concerns that facilitates maintenance and updates.
 
-## 4.2 Implementation Details
+**Figure 4.1** illustrates the high-level architecture of the system.
 
-### 4.2.1 Backend Implementation
+**[Insert Figure 4.1: System Architecture Diagram]**  
+*Description: A diagram showing the React frontend on the left, sending HTTP requests to the Express.js backend in the center, which processes these requests and interacts with the MongoDB database on the right. Arrows indicate the bidirectional flow of data and requests between these components, with labels clearly identifying each layer.*
 
-The backend of the Student Project Allocation System was implemented using Node.js with Express.js as the web application framework. This combination provides a lightweight, flexible foundation for building RESTful APIs with excellent performance characteristics.
 
-**Server Configuration:**
 
-The main server configuration is defined in `server.js`, which sets up the Express application, middleware, routes, and database connection:
+## 4.2 Technology Stack
 
-```javascript
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const morgan = require('morgan');
-require('dotenv').config();
+The system leverages the MERN stack, chosen for its flexibility, scalability, and seamless integration of JavaScript-based technologies. The technology stack is divided into backend and frontend components:
 
-// Import routes
-const authRoutes = require('./routes/auth');
-const projectRoutes = require('./routes/projects');
-const userRoutes = require('./routes/users');
+### Backend
+- **Node.js**: JavaScript runtime environment for server-side execution.
+- **Express.js**: Web application framework for building RESTful APIs.
+- **MongoDB**: NoSQL database for flexible, schema-less data storage.
+- **Mongoose**: Object modeling tool for MongoDB, simplifying schema definition and queries.
+- **JWT**: JSON Web Tokens for secure, role-based authentication.
+- **bcryptjs**: Library for hashing passwords to enhance security.
 
-// Initialize express app
-const app = express();
+### Frontend
+- **React**: JavaScript library for building dynamic user interfaces.
+- **React Router**: Handles navigation within the single-page application.
+- **Bootstrap/React-Bootstrap**: Provides responsive UI components and styling.
+- **Axios**: Promise-based HTTP client for API requests.
+- **React-Toastify**: Notification system for user feedback.
 
-// Middleware
-app.use(express.json());
-// CORS Configuration
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
-app.use(morgan('dev'));
+This combination ensures efficient full-stack development and a robust, user-friendly application.
 
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/users', userRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    success: false,
-    error: 'Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
-  });
-});
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+## 4.3 Development Setup
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+Setting up the development environment requires Node.js (v14 or higher), npm (v6 or higher), and MongoDB (v4.4 or higher). The process involves cloning the repository, configuring environment variables, and installing dependencies for both the backend and frontend.
+
+1. **Clone the Repository**:
+   ```
+   git clone <repository-url>
+   cd project-allocation-system-1
+   ```
+
+2. **Set Up Environment Variables**:  
+   Create a `.env` file in the `backend` directory with:
+   ```
+   NODE_ENV=development
+   PORT=5000
+   MONGO_URL=mongodb://localhost:27017/project-allocation
+   JWT_SECRET=your_jwt_secret_key
+   JWT_EXPIRE=30d
+   ```
+
+3. **Install Dependencies**:  
+   - Backend: `cd backend && npm install`  
+   - Frontend: `cd ../frontend && npm install`
+
+4. **Run Development Servers**:  
+   - Backend: `cd backend && npm run dev` (runs on http://localhost:5000)  
+   - Frontend: `cd ../frontend && npm start` (runs on http://localhost:3000)
+
+The project structure is organized into `backend` and `frontend` directories, enhancing modularity.
+
+**Figure 4.2** shows the project directory structure.
+
+**[Insert Figure 4.2: Project Directory Structure]**  
+*Description: A tree diagram depicting the project organization, including `backend/` with subfolders like `middleware/`, `models/`, and `routes/`, and `frontend/` with subfolders such as `src/components/` and `src/context/`. Key files like `server.js` and `App.js` are highlighted.*
+
+
+
+## 4.4 Key Modules and Features
+
+The system includes several key modules to manage the project allocation process effectively.
+
+### 4.4.1 Authentication Module
+Authentication is implemented using JSON Web Tokens (JWT). User credentials are verified against the database, and a JWT token is generated upon successful login, enabling role-based access control for students, supervisors, and administrators. Passwords are hashed with bcryptjs for security.
+
+**Figure 4.3** shows the login interface.
+
+**[Insert Figure 4.3: Screenshot of Login Page]**  
+*Description: A screenshot of the login form featuring a clean design with the university logo at the top, input fields for email and password, a dropdown menu for selecting the user role (student, supervisor, admin), and a "Login" button. The form is centered on a subtle gradient background.*
+
+### 4.4.2 Project Submission Module
+Students can submit project proposals via a dedicated form, including fields for project title, description, and attachments. Submissions are stored in MongoDB with a "pending" status.
+
+**Figure 4.4** displays the project submission form.
+
+**[Insert Figure 4.4: Screenshot of Project Submission Form]**  
+*Description: A screenshot showing a form with labeled input fields for project title and description, a file upload section for attachments, and a "Submit" button, styled with Bootstrap for responsiveness.*
+
+### 4.4.3 Project Approval Workflow
+Supervisors review submitted proposals, provide feedback, and approve or reject them. Approved projects proceed to allocation, while rejected ones can be revised and resubmitted.
+
+**Figure 4.5** illustrates the approval workflow.
+
+**[Insert Figure 4.5: Sequence Diagram of Project Approval]**  
+*Description: A sequence diagram depicting interactions: the student submits a proposal, the system notifies the supervisor, the supervisor reviews and approves/rejects it with feedback, and the system updates the proposal status accordingly.*
+
+
+
+## 4.5 Database Implementation
+
+MongoDB is utilized with Mongoose for object modeling. The database includes key collections such as `Users`, `Projects`, and `Submissions`, storing user details, project data, and submission records, respectively.
+
+**Figure 4.6** presents the Mongoose schema for the Project model.
+
+**[Insert Figure 4.6: Code Snippet of Project Schema]**  
+*Description: A code snippet showing the Mongoose schema definition for the Project model, including fields like `title` (String), `description` (String), `status` (String, default: "pending"), `studentId` (ObjectId), and `supervisorId` (ObjectId).*
+
+
+
+## 4.6 User Interfaces
+
+The system provides tailored dashboards for each user role:
+
+- **Student Dashboard**: Allows proposal submission and status tracking.
+- **Supervisor Dashboard**: Facilitates review and management of proposals.
+- **Admin Dashboard**: Oversees user management and system settings.
+
+**Figure 4.7** shows the student dashboard.
+
+**[Insert Figure 4.7: Screenshot of Student Dashboard]**  
+*Description: A screenshot displaying a table of submitted projects with columns for title, status (e.g., "pending", "approved"), and submission date, alongside a "Submit New Proposal" button.*
+
+**Figure 4.8** displays the supervisor dashboard.
+
+**[Insert Figure 4.8: Screenshot of Supervisor Dashboard]**  
+*Description: A screenshot showing a list of pending proposals with options to view details, approve, or reject each one, including a feedback input field.*
+
+
+
+## 4.7 Testing
+
+The system underwent rigorous testing to ensure functionality and reliability:
+
+- **Unit Testing**: Jest was used for React components, and Mocha for backend routes.
+- **Integration Testing**: Verified seamless interaction between frontend and backend APIs.
+- **User Acceptance Testing (UAT)**: Conducted with students, supervisors, and administrators to validate usability.
+
+**Figure 4.9** illustrates a sample test case for project submission.
+
+**[Insert Figure 4.9: Sample Test Case Table]**  
+*Description: A table with columns: Test ID (e.g., T01), Description ("Submit project proposal"), Input ("Title: 'AI Chatbot', Description: 'A chatbot system'"), Expected Output ("Proposal saved, status 'pending'"), Result ("Pass").*
+
+
+
+## 4.8 Deployment
+
+The system is deployed using Docker, containerizing the MERN application and MongoDB for consistency across environments. The deployment process involves:
+
+```
+docker-compose up -d
 ```
 
-The server configuration includes:
-- Middleware setup for JSON parsing, CORS, and request logging
-- Route definitions for authentication, projects, and users
-- Global error handling middleware
-- MongoDB connection using Mongoose
-- Server initialization on the specified port
+This command starts both containers in detached mode, making the application accessible at http://localhost:5000.
 
-**Data Models:**
+**Figure 4.10** shows the Docker deployment architecture.
 
-The system uses Mongoose schemas to define the structure of data stored in MongoDB. The two primary models are User and Project:
+**[Insert Figure 4.10: Docker Deployment Diagram]**  
+*Description: A diagram depicting two Docker containers: one for MongoDB and one for the MERN application, with the application container exposing port 5000 and connecting to the database container.*
 
-1. **User Model (`User.js`):**
 
-```javascript
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Please add a name'],
-    trim: true,
-    maxlength: [50, 'Name cannot be more than 50 characters']
-  },
-  email: {
-    type: String,
-    required: [true, 'Please add an email'],
-    unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      'Please add a valid email'
-    ]
-  },
-  password: {
-    type: String,
-    required: [true, 'Please add a password'],
-    minlength: [6, 'Password must be at least 6 characters'],
-    select: false
-  },
-  role: {
-    type: String,
-    enum: ['student', 'supervisor', 'admin'],
-    default: 'student'
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
+## 4.9 Challenges and Solutions
 
-// Encrypt password using bcrypt
-UserSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+Several challenges arose during implementation:
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-});
+- **Challenge 1**: Ensuring real-time updates for project statuses.  
+  - **Solution**: Integrated WebSockets for live notifications, enhancing user experience.
+- **Challenge 2**: Managing file uploads for project attachments.  
+  - **Solution**: Utilized Multer middleware in Express.js for efficient file handling.
 
-// Sign JWT and return
-UserSchema.methods.getSignedJwtToken = function() {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
-  });
-};
 
-// Match user entered password to hashed password in database
-UserSchema.methods.matchPassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
-```
 
-The User model includes:
-- Basic user information (name, email)
-- Password field with automatic hashing using bcrypt
-- Role-based access control with three roles: student, supervisor, and admin
-- Methods for JWT generation and password verification
+## 4.10 Conclusion
 
-2. **Project Model (`Project.js`):**
+This chapter has outlined the implementation of the Student Project Allocation and Verification System, showcasing how the MERN stack and OOSDM were employed to develop a robust, user-friendly platform. Diagrams and screenshots provide a clear visual representation of the system’s architecture, features, and interfaces. Successful Docker deployment ensures scalability and ease of maintenance, laying the groundwork for future enhancements such as automated notifications and advanced analytics.
 
-```javascript
-const mongoose = require('mongoose');
+ 
 
-const ProjectSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: [true, 'Please add a title'],
-    trim: true,
-    maxlength: [100, 'Title cannot be more than 100 characters'],
-    unique: true
-  },
-  description: {
-    type: String,
-    required: [true, 'Please add a description'],
-    maxlength: [1000, 'Description cannot be more than 1000 characters']
-  },
-  status: {
-    type: String,
-    enum: ['submitted', 'approved', 'rejected'],
-    default: 'submitted'
-  },
-  student: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  supervisor: {
-    type: mongoose.Schema.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  submissionDate: {
-    type: Date,
-    default: Date.now
-  },
-  feedback: {
-    type: String,
-    maxlength: [500, 'Feedback cannot be more than 500 characters']
-  }
-});
-
-// Create index on title field for efficient duplicate checks
-ProjectSchema.index({ title: 1 });
-```
-
-The Project model includes:
-- Project details (title, description)
-- Status tracking (submitted, approved, rejected)
-- References to the student who submitted the project and the assigned supervisor
-- Submission date and feedback fields
-- An index on the title field for efficient duplicate checking
-
-**Authentication Implementation:**
-
-The system implements JWT-based authentication with middleware for protecting routes and authorizing access based on user roles:
-
-```javascript
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-
-// Protect routes
-exports.protect = async (req, res, next) => {
-  let token;
-
-  // Check for token in headers
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    token = req.headers.authorization.split(' ')[1];
-  }
-
-  // Make sure token exists
-  if (!token) {
-    return res.status(401).json({
-      success: false,
-      message: 'Not authorized to access this route'
-    });
-  }
-
-  try {
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Get user from the token
-    req.user = await User.findById(decoded.id);
-
-    if (!req.user) {
-      return res.status(401).json({
-        success: false,
-        message: 'User not found'
-      });
-    }
-
-    next();
-  } catch (err) {
-    return res.status(401).json({
-      success: false,
-      message: 'Not authorized to access this route'
-    });
-  }
-};
-
-// Grant access to specific roles
-exports.authorize = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: `User role ${req.user.role} is not authorized to access this route`
-      });
-    }
-    next();
-  };
-};
-```
-
-The authentication middleware includes:
-- Token extraction from the Authorization header
-- Token verification using the JWT secret
-- User retrieval based on the decoded token
-- Role-based authorization for restricting access to specific routes
-
-### 4.2.2 Frontend Implementation
-
-The frontend of the Student Project Allocation System was implemented using React, a popular JavaScript library for building user interfaces. The frontend follows a component-based architecture with context-based state management.
-
-**Application Structure:**
-
-The main application structure is defined in `App.js`, which sets up the routing and authentication context:
-
-```javascript
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import axios from 'axios';
-
-// Components
-import Navbar from './components/layout/Navbar';
-import Home from './components/pages/Home';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
-import Dashboard from './components/dashboard/Dashboard';
-import ProjectForm from './components/projects/ProjectForm';
-import ProjectDetails from './components/projects/ProjectDetails';
-import AdminDashboard from './components/admin/AdminDashboard';
-import UserManagement from './components/admin/UserManagement';
-import NotFound from './components/pages/NotFound';
-
-// Context
-import AuthContext, { AuthProvider } from './context/AuthContext';
-
-// CSS
-import './App.css';
-
-const App = () => {
-  return (
-    <AuthProvider>
-      <div className="App">
-        <Navbar />
-        <div className="container mt-4">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } />
-            <Route path="/projects/new" element={
-              <PrivateRoute roles={['student']}>
-                <ProjectForm />
-              </PrivateRoute>
-            } />
-            <Route path="/projects/:id" element={
-              <PrivateRoute>
-                <ProjectDetails />
-              </PrivateRoute>
-            } />
-            <Route path="/admin" element={
-              <PrivateRoute roles={['admin']}>
-                <AdminDashboard />
-              </PrivateRoute>
-            } />
-            <Route path="/admin/users" element={
-              <PrivateRoute roles={['admin']}>
-                <UserManagement />
-              </PrivateRoute>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </div>
-    </AuthProvider>
-  );
-};
-```
-
-The application structure includes:
-- Route definitions for different pages
-- Protected routes using the PrivateRoute component
-- Role-based access control for specific routes
-- Global authentication context using the AuthProvider
-
-**Authentication Components:**
-
-The system implements authentication using a combination of context-based state management and protected route components:
-
-1. **Protected Route Component (`ProtectedRoute.js`):**
-
-```javascript
-import React, { useContext } from 'react';
-import { Navigate } from 'react-router-dom';
-import AuthContext from '../../context/AuthContext';
-import Spinner from 'react-bootstrap/Spinner';
-
-const ProtectedRoute = ({ children, roles }) => {
-  const { user, isAuthenticated, loading } = useContext(AuthContext);
-
-  if (loading) {
-    return (
-      <div className="text-center mt-5">
-        <Spinner animation="border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (roles && !roles.includes(user?.role)) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
-  return children;
-};
-```
-
-The ProtectedRoute component:
-- Checks if the user is authenticated
-- Verifies if the user has the required role (if specified)
-- Redirects to the login page if not authenticated
-- Redirects to the dashboard if the user doesn't have the required role
-- Shows a loading spinner while authentication state is being determined
-
-2. **Login Component (`Login.js`):**
-
-```javascript
-import React, { useState, useContext } from 'react';
-import { Form, Button, Card, Alert } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import AuthContext from '../../context/AuthContext';
-
-const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { login } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const { email, password } = formData;
-
-  const onChange = e => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const onSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    
-    if (!email || !password) {
-      setError('Please enter both email and password');
-      setLoading(false);
-      return;
-    }
-    
-    const success = await login(formData);
-    
-    if (success) {
-      navigate('/dashboard');
+This structure, enriched with detailed descriptions and placeholders for images, mirrors the comprehensive and visually engaging style of Kosin’s Chapter 4, effectively conveying the implementation process of the system.
